@@ -41,7 +41,6 @@ class BusinessesViewController: UIViewController {
     // Dispose of any resources that can be recreated.
   }
   
-  
 }
 
 extension BusinessesViewController: UITableViewDataSource, UITableViewDelegate {
@@ -60,4 +59,23 @@ extension BusinessesViewController: UITableViewDataSource, UITableViewDelegate {
     
     return cell
   }
+}
+
+extension BusinessesViewController: FiltersViewControllerDelegate {
+  
+  override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    let navigationController = segue.destinationViewController as! UINavigationController
+    let filtersViewController = navigationController.topViewController as! FiltersViewController
+    filtersViewController.delegate = self
+  }
+  
+  func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String : AnyObject]) {
+    let categories = filters["categories"] as? [String]
+    print(categories)
+    Business.searchWithTerm("Restaurants", sort: nil, categories: categories, deals: nil) { (businesses: [Business]!, error: NSError!) -> Void in
+      self.businesses = businesses
+      self.tableView.reloadData()
+    }
+  }
+  
 }
