@@ -29,11 +29,6 @@ class FiltersViewController: UIViewController {
     tableView.delegate = self
   }
   
-  override func didReceiveMemoryWarning() {
-    super.didReceiveMemoryWarning()
-    // Dispose of any resources that can be recreated.
-  }
-  
   @IBAction func onCancelButton(sender: AnyObject) {
     dismissViewControllerAnimated(true, completion: nil)
   }
@@ -50,6 +45,8 @@ class FiltersViewController: UIViewController {
     }
     if selectedCategories.count > 0 {
       filters["categories"] = selectedCategories
+    } else {
+      filters["categories"] =  []
     }
     delegate?.filtersViewController?(self, didUpdateFilters: filters)
   }
@@ -240,13 +237,32 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource, Swi
     return cell
   }
   
+  func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    return 1
+  }
+  
   func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//    if section == 0 {
+//      return 3
+//    } else {
+//      return categories.count
+//    }
     return categories.count
+  }
+  
+  func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    let cell = tableView.cellForRowAtIndexPath(indexPath)!
+    cell.contentView.backgroundColor = MyColors.selectedCellColor
+  }
+  
+  func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
+    let cell = tableView.cellForRowAtIndexPath(indexPath)!
+    cell.contentView.backgroundColor = UIColor.whiteColor()
   }
   
   func switchCell(switchCell: SwitchCell, didChangeValue value: Bool) {
     let indexPath = tableView.indexPathForCell(switchCell)!
-    print("filtersVC got the swith event")
+    // print("filtersVC got the swith event")
     switchStates[indexPath.row] = value
   }
 }
