@@ -14,8 +14,20 @@ import UIKit
 
 class FiltersViewController: UIViewController {
   
+  var isDealOfferred = false
+  
+  var distanceList = ["Auto", "1 km", "3 km", "5 km", "10 km"]
+  var distanceListValue = [0, 1000, 3000, 5000, 10000]
+  var selectedDistance = 0
+  var isExpandingDistanceSection = false
+  
+  var sortByList = ["Best Matched", "Distance", "Highest Rated"]
+  var selectedSortBy = 0
+  var isExpandingSortBySection = false
+  
   var categories: [[String:String]]!
-  var switchStates = [Int:Bool]()
+  var categoriesSwitchStates = [Int:Bool]()
+  
   weak var delegate: FiltersViewControllerDelegate?
   
   @IBOutlet weak var tableView: UITableView!
@@ -38,7 +50,7 @@ class FiltersViewController: UIViewController {
     
     var filters = [String:AnyObject]()
     var selectedCategories = [String]()
-    for (row, isSelected) in switchStates {
+    for (row, isSelected) in categoriesSwitchStates {
       if isSelected {
         selectedCategories.append(categories[row]["code"]!)
       }
@@ -48,6 +60,15 @@ class FiltersViewController: UIViewController {
     } else {
       filters["categories"] =  []
     }
+    filters["sortBy"] = selectedSortBy
+    filters["deal"] = isDealOfferred
+    if selectedDistance == 0 {
+      filters["distance"] = nil
+    } else {
+      filters["distance"] = distanceListValue[selectedDistance]
+    }
+    
+    print(filters)
     delegate?.filtersViewController?(self, didUpdateFilters: filters)
   }
   
@@ -227,42 +248,130 @@ class FiltersViewController: UIViewController {
   
 }
 
-extension FiltersViewController: UITableViewDelegate, UITableViewDataSource, SwitchCellDelegate {
+extension FiltersViewController: UITableViewDelegate, UITableViewDataSource, SwitchCellDelegate, CheckBoxCellDelegate {
   
   func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCellWithIdentifier("switchCell", forIndexPath: indexPath) as! SwitchCell
-    cell.switchLabel.text = categories[indexPath.row]["name"]
-    cell.delegate = self
-    cell.onSwitch.on = switchStates[indexPath.row] ?? false
-    return cell
+    
+    switch indexPath.section {
+      // Deal
+    case 0:
+      let cell = tableView.dequeueReusableCellWithIdentifier("checkBoxCell", forIndexPath: indexPath) as! CheckBoxCell
+      cell.checkBoxLabel.text = "Offerring deal"
+      cell.checkBox.on = false
+      cell.checkBox.userInteractionEnabled = true
+      cell.delegate = self
+      return cell
+      
+      // Distance
+    case 1:
+      let cell = tableView.dequeueReusableCellWithIdentifier("checkBoxCell", forIndexPath: indexPath) as! CheckBoxCell
+      cell.checkBoxLabel.text = distanceList[indexPath.row]
+      cell.checkBox.on = (indexPath.row == selectedDistance)
+      return cell
+      
+      // Sort by
+    case 2:
+      let cell = tableView.dequeueReusableCellWithIdentifier("checkBoxCell", forIndexPath: indexPath) as! CheckBoxCell
+      cell.checkBoxLabel.text = sortByList[indexPath.row]
+      cell.checkBox.on = (indexPath.row == selectedSortBy)
+      return cell
+      
+    case 3:
+      let cell = tableView.dequeueReusableCellWithIdentifier("switchCell", forIndexPath: indexPath) as! SwitchCell
+      cell.switchLabel.text = categories[indexPath.row]["name"]
+      cell.delegate = self
+      cell.onSwitch.on = categoriesSwitchStates[indexPath.row] ?? false
+      return cell
+      
+    default:
+      return UITableViewCell()
+    }
   }
   
   func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-    return 1
+    return 4
   }
   
   func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//    if section == 0 {
-//      return 3
-//    } else {
-//      return categories.count
-//    }
-    return categories.count
+    switch section {
+    case 0: return 1
+    case 1: return distanceList.count
+    case 2: return sortByList.count
+    case 3: return categories.count
+    default: return 0
+    }
+  }
+  
+  func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    let headerView = UIView()
+    var headerTitle = UILabel()
+    if section == 0 {
+      headerTitle = UILabel(frame: CGRect(x: 15, y: 0, width: 200, height: 35))
+    } else {
+      headerTitle = UILabel(frame: CGRect(x: 15, y: 15, width: 200, height: 35))
+    }
+    switch section {
+    case 0: headerTitle.text = "Deal"
+    case 1: headerTitle.text = "Distance"
+    case 2: headerTitle.text = "Sort by"
+    case 3: headerTitle.text = "Categories"
+    default: headerTitle.text = ""
+    }
+    headerTitle.textColor = MyColors.carrot
+    headerView.addSubview(headerTitle)
+    headerView.backgroundColor = MyColors.tableColor
+    return headerView
+  }
+  
+  func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    return section == 0 ? 35 : 50
+  }
+  
+  func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    switch indexPath.section {
+    case 0, 3: return 44
+    case 1: return isExpandingDistanceSection ? 44 : (indexPath.row == selectedDistance ? 44 : 0)
+    case 2: return isExpandingSortBySection ? 44 : (indexPath.row == selectedSortBy ? 44 : 0)
+    default: return 44
+    }
   }
   
   func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-    let cell = tableView.cellForRowAtIndexPath(indexPath)!
-    cell.contentView.backgroundColor = MyColors.selectedCellColor
+    if indexPath.section == 1 {
+      // Toggle states
+      if isExpandingDistanceSection {
+        selectedDistance = indexPath.row
+        isExpandingDistanceSection = false
+        tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: .Automatic)
+      } else {
+        // Expand this section
+        isExpandingDistanceSection = true
+        tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: .Automatic)
+      }
+    }
+    
+    if indexPath.section == 2 {
+      // Toggle states
+      if isExpandingSortBySection {
+        selectedSortBy = indexPath.row
+        isExpandingSortBySection = false
+        tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: .Automatic)
+      } else {
+        // Expand this section
+        isExpandingSortBySection = true
+        tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: .Automatic)
+      }
+    }
   }
   
-  func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
-    let cell = tableView.cellForRowAtIndexPath(indexPath)!
-    cell.contentView.backgroundColor = UIColor.whiteColor()
+  func checkBoxCell(checkBoxCell: CheckBoxCell, didChangeValue value: Bool) {
+    print("deal = \(value)")
+    isDealOfferred = value
   }
   
   func switchCell(switchCell: SwitchCell, didChangeValue value: Bool) {
     let indexPath = tableView.indexPathForCell(switchCell)!
     // print("filtersVC got the swith event")
-    switchStates[indexPath.row] = value
+    categoriesSwitchStates[indexPath.row] = value
   }
 }

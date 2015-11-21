@@ -20,15 +20,25 @@
                                 <rect key="frame" x="261" y="282" width="78" height="36"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Powered_By_Yelp" translatesAutoresizingMaskIntoConstraints="NO" id="tgL-S2-JW2">
+                                <rect key="frame" x="0.0" y="552" width="600" height="48"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="48" id="wqa-OQ-tF0"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <animations/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.98039215686274506" green="0.22745098039215686" blue="0.2627450980392157" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="tgL-S2-JW2" secondAttribute="trailing" id="Nhf-gY-4p8"/>
                             <constraint firstItem="3ih-Ob-h5i" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="VGb-Xh-53H"/>
+                            <constraint firstItem="xb3-aO-Qok" firstAttribute="top" secondItem="tgL-S2-JW2" secondAttribute="bottom" id="ehh-a0-ZCR"/>
                             <constraint firstItem="3ih-Ob-h5i" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="m6T-6H-0fb"/>
+                            <constraint firstItem="tgL-S2-JW2" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="uxf-Lx-Hcc"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -37,4 +47,7 @@
             <point key="canvasLocation" x="53" y="375"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Powered_By_Yelp" width="720" height="90"/>
+    </resources>
 </document>

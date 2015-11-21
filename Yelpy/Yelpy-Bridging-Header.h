@@ -6,3 +6,4 @@
 #import "BDBOAuth1Manager/BDBOAuth1RequestOperationManager.h"
 #import "AFNetworking/UIImageView+AFNetworking.h"
 #import <MBProgressHUD/MBProgressHUD.h>
+#import <BEMCheckBox/BEMCheckBox.h>

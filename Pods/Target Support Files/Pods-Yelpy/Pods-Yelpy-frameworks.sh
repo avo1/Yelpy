@@ -86,10 +86,12 @@ strip_invalid_archs() {
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-Yelpy/AFNetworking.framework"
   install_framework "Pods-Yelpy/BDBOAuth1Manager.framework"
+  install_framework "Pods-Yelpy/BEMCheckBox.framework"
   install_framework "Pods-Yelpy/MBProgressHUD.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-Yelpy/AFNetworking.framework"
   install_framework "Pods-Yelpy/BDBOAuth1Manager.framework"
+  install_framework "Pods-Yelpy/BEMCheckBox.framework"
   install_framework "Pods-Yelpy/MBProgressHUD.framework"
 fi

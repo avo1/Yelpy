@@ -31,7 +31,9 @@ class BusinessesViewController: UIViewController {
   let nResults = 20
   var starting = 0
   var categories = [String]()
-  
+  var sortBy = 1
+  var distance: Int?
+  var deals = false
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -71,23 +73,23 @@ class BusinessesViewController: UIViewController {
     // Prepare the dimmingView
     dimmingView.frame.origin.y = 0 //tableView.frame.origin.y
     dimmingView.frame.size.height = tableView.frame.size.height
-    dimmingView.backgroundColor = MyColors.navigationTintColor
-    dimmingView.alpha = 0.1
+    dimmingView.backgroundColor = UIColor.grayColor()
+    dimmingView.alpha = 0.3
     dimmingView.hidden = true
     tapGestureOnDimming = UITapGestureRecognizer(target: self, action: "cancelSearch:")
     dimmingView.addGestureRecognizer(tapGestureOnDimming)
     
     // Load initial data
-    searchRestaurants(searchTerm, categories: categories, starting: starting)
+    searchRestaurants(searchTerm, sortBy: sortBy, distance: distance, categories: categories, deals: deals, starting: starting)
   }
   
-  func searchRestaurants(term: String!, categories: [String]?, starting: Int?) {
+  func searchRestaurants(term: String!, sortBy: Int, distance: Int?, categories: [String]?, deals: Bool?, starting: Int?) {
     // Only show HUD if not infinityLoad
     if !isLoadingNextPage {
       MBProgressHUD.showHUDAddedTo(self.view, animated: true)
     }
     
-    Business.searchWithTerm(term, sort: .Distance, categories: categories, deals: false, starting: starting) { (businesses: [Business]!, error: NSError!) -> Void in
+    Business.searchWithTerm(term, sort: YelpSortMode(rawValue: sortBy), distance: distance, categories: categories, deals: deals, starting: starting) { (businesses: [Business]!, error: NSError!) -> Void in
       print(self.businesses.count)
       if businesses != nil {
         for business in businesses {
@@ -122,7 +124,7 @@ extension BusinessesViewController: UITableViewDataSource, UITableViewDelegate {
     let cell = tableView.dequeueReusableCellWithIdentifier("businessCell", forIndexPath: indexPath) as! BusinessCell
     
     cell.business = isSearching ? foundBiz[indexPath.row] : businesses[indexPath.row]
-    print("indexpath = \(indexPath.row)")
+    // print("indexpath = \(indexPath.row)")
     
     // Infinite load if last cell
     if !isLoadingNextPage && !isEndOfFeed && !isSearching {
@@ -130,7 +132,7 @@ extension BusinessesViewController: UITableViewDataSource, UITableViewDelegate {
         starting += nResults
         loadingView.startAnimating()
         isLoadingNextPage = true
-        searchRestaurants(searchTerm, categories: categories, starting: starting)
+        searchRestaurants(searchTerm, sortBy: sortBy, distance: distance, categories: categories, deals: deals, starting: starting)
       }
     }
     
@@ -163,7 +165,10 @@ extension BusinessesViewController: FiltersViewControllerDelegate {
     businesses = [Business]()
     
     categories = (filters["categories"] as? [String])!
-    searchRestaurants(searchTerm, categories: categories, starting: starting)
+    sortBy = (filters["sortBy"] as? Int)!
+    deals = (filters["deal"] as? Bool)!
+    distance = filters["distance"] as? Int
+    searchRestaurants(searchTerm, sortBy: sortBy, distance: distance, categories: categories, deals: deals, starting: starting)
   }
   
 }

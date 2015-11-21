@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		180DDC161C0088DC0012F691 /* CheckBoxCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180DDC151C0088DC0012F691 /* CheckBoxCell.swift */; };
 		18C77F7A1C002E4100BC046E /* MyColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C77F791C002E4100BC046E /* MyColors.swift */; };
 		18C8708F1BFB87D2002652CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C8708E1BFB87D2002652CC /* AppDelegate.swift */; };
 		18C870911BFB87D2002652CC /* BusinessesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C870901BFB87D2002652CC /* BusinessesViewController.swift */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		180DDC151C0088DC0012F691 /* CheckBoxCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckBoxCell.swift; sourceTree = "<group>"; };
 		18C77F791C002E4100BC046E /* MyColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyColors.swift; sourceTree = "<group>"; };
 		18C8708B1BFB87D2002652CC /* Yelpy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yelpy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		18C8708E1BFB87D2002652CC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 			children = (
 				18C870BA1BFB9716002652CC /* BusinessCell.swift */,
 				18F7BF4E1BFE33E300B7DA1B /* SwitchCell.swift */,
+				180DDC151C0088DC0012F691 /* CheckBoxCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -264,6 +267,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				18C870BB1BFB9716002652CC /* BusinessCell.swift in Sources */,
+				180DDC161C0088DC0012F691 /* CheckBoxCell.swift in Sources */,
 				18C77F7A1C002E4100BC046E /* MyColors.swift in Sources */,
 				18C870AF1BFB8D27002652CC /* YelpClient.swift in Sources */,
 				18F7BF511BFE373700B7DA1B /* FiltersViewController.swift in Sources */,
