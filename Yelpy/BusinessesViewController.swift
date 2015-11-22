@@ -16,6 +16,7 @@ class BusinessesViewController: UIViewController {
   @IBOutlet weak var dimmingView: UIView!
   @IBOutlet weak var navBar: UINavigationItem!
   var mapButton: UIBarButtonItem!
+  var cancelSearchButton: UIBarButtonItem!
   
   var searchBar: UISearchBar!
   var searchTerm = "coffee"
@@ -74,6 +75,7 @@ class BusinessesViewController: UIViewController {
     
     // Initialize the mapButton
     mapButton = UIBarButtonItem(image: UIImage(named: "Map"), style: UIBarButtonItemStyle.Plain, target: self, action: "showMap")
+    cancelSearchButton = UIBarButtonItem(image: UIImage(named: "Clear"), style: UIBarButtonItemStyle.Plain, target: self, action: "cancelSearch")
     navBar.rightBarButtonItem = mapButton
     
     // Prepare the dimmingView
@@ -82,7 +84,7 @@ class BusinessesViewController: UIViewController {
     dimmingView.backgroundColor = UIColor.grayColor()
     dimmingView.alpha = 0.3
     dimmingView.hidden = true
-    tapGestureOnDimming = UITapGestureRecognizer(target: self, action: "cancelSearch:")
+    tapGestureOnDimming = UITapGestureRecognizer(target: self, action: "onTapDimmingView:")
     dimmingView.addGestureRecognizer(tapGestureOnDimming)
     
     // Load initial data
@@ -132,6 +134,10 @@ class BusinessesViewController: UIViewController {
   func showMap() {
     isMapFullScreen = !isMapFullScreen
     navBar.rightBarButtonItem!.image = isMapFullScreen ? UIImage(named: "List") : UIImage(named: "Map")
+    // Scroll to top
+    //tableView.contentOffset = CGPointMake(0, 0 - tableView.contentInset.top)
+    let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+    tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
     tableView.reloadData()
   }
 }
@@ -156,6 +162,10 @@ extension BusinessesViewController: UITableViewDataSource, UITableViewDelegate {
   func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
     if indexPath.section == 0 {
       let cell = tableView.dequeueReusableCellWithIdentifier("mapCell", forIndexPath: indexPath) as! MapCell
+      
+      // Remove all annotations
+      let annotationsToRemove = cell.mapView.annotations.filter { $0 !== cell.mapView.userLocation }
+      cell.mapView.removeAnnotations(annotationsToRemove )
       
       // This is the "current location" used in YelpClient API
       var userLocation = CLLocationCoordinate2D()
@@ -255,7 +265,7 @@ extension BusinessesViewController: FiltersViewControllerDelegate {
 
 // MARK: - Search bar
 extension BusinessesViewController: UISearchBarDelegate {
-  func cancelSearch(gesture: UITapGestureRecognizer) {
+  func onTapDimmingView(gesture: UITapGestureRecognizer) {
     if gesture.state == UIGestureRecognizerState.Ended {
       searchBarCancelButtonClicked(searchBar)
     }
@@ -267,9 +277,8 @@ extension BusinessesViewController: UISearchBarDelegate {
   }
   
   func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-    navBar.rightBarButtonItem = nil
+    navBar.rightBarButtonItem = cancelSearchButton
     dimmingView.hidden = false
-    searchBar.showsCancelButton = true
   }
   
   func searchBarTextDidEndEditing(searchBar: UISearchBar) {
@@ -288,7 +297,6 @@ extension BusinessesViewController: UISearchBarDelegate {
     dimmingView.hidden = true
     searchTerm = searchBar.text!
     searchBar.resignFirstResponder()
-    searchBar.showsCancelButton = false
     navBar.rightBarButtonItem = mapButton
     // Clear the list
     starting = 0
@@ -296,4 +304,10 @@ extension BusinessesViewController: UISearchBarDelegate {
     searchRestaurants(searchTerm, sortBy: sortBy, distance: distance, categories: categories, deals: deals, starting: starting)
   }
   
+  func cancelSearch() {
+    searchBar.text = ""
+    dimmingView.hidden = true
+    searchBar.resignFirstResponder()
+    navBar.rightBarButtonItem = mapButton
+  }
 }
