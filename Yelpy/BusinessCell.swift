@@ -22,7 +22,11 @@ class BusinessCell: UITableViewCell {
   var business: Business! {
     didSet {
       if business.imageURL != nil {
-        thumbImageView.setImageWithURL(business.imageURL!)
+        thumbImageView.alpha = 0.0
+        UIView.animateWithDuration(0.3, animations: {
+          self.thumbImageView.setImageWithURL(self.business.imageURL!)
+          self.thumbImageView.alpha = 1.0
+          }, completion: nil)
       } else {
         thumbImageView.image = UIImage(named: "noImage")
       }
