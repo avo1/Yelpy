@@ -16,6 +16,7 @@ class Business: NSObject {
   let distance: String?
   let ratingImageURL: NSURL?
   let reviewCount: NSNumber?
+  let hasDeal: Bool!
   
   init(dictionary: NSDictionary) {
     name = dictionary["name"] as? String
@@ -72,6 +73,8 @@ class Business: NSObject {
     } else {
       ratingImageURL = nil
     }
+    
+    self.hasDeal = dictionary["deals"] == nil ? false : true
     
     reviewCount = dictionary["review_count"] as? NSNumber
   }

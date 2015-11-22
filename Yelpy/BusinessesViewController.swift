@@ -15,11 +15,9 @@ class BusinessesViewController: UIViewController {
   @IBOutlet weak var dimmingView: UIView!
   
   var searchBar: UISearchBar!
-  var searchTerm = "Restaurant"
+  var searchTerm = "coffee"
   var businesses = [Business]()
-  var foundBiz = [Business]()
   
-  var isSearching = false
   var isLoadingNextPage = false
   var isEndOfFeed = false
   
@@ -31,7 +29,7 @@ class BusinessesViewController: UIViewController {
   let nResults = 20
   var starting = 0
   var categories = [String]()
-  var sortBy = 1
+  var sortBy = 0
   var distance: Int?
   var deals = false
   var filters = [String:AnyObject]()
@@ -87,15 +85,15 @@ class BusinessesViewController: UIViewController {
     searchRestaurants(searchTerm, sortBy: sortBy, distance: distance, categories: categories, deals: deals, starting: starting)
   }
   
-  func searchRestaurants(term: String!, sortBy: Int, distance: Int?, categories: [String]?, deals: Bool?, starting: Int?) {
+  func searchRestaurants(term: String!, sortBy: Int!, distance: Int?, categories: [String]?, deals: Bool?, starting: Int?) {
     // Only show HUD if not infinityLoad
     if !isLoadingNextPage {
       MBProgressHUD.showHUDAddedTo(self.view, animated: true)
     }
     
     Business.searchWithTerm(term, sort: YelpSortMode(rawValue: sortBy), distance: distance, categories: categories, deals: deals, starting: starting) { (businesses: [Business]!, error: NSError!) -> Void in
-      print("API returns \(self.businesses.count)")
       if businesses != nil {
+        print("API returns \(businesses.count)")
         for business in businesses {
           self.businesses.append(business)
           // print(business.name! + " @ " + business.address!)
@@ -119,17 +117,19 @@ extension BusinessesViewController: UITableViewDataSource, UITableViewDelegate {
   func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     loadingView.stopAnimating()
     //print(businesses.count)
-    return isSearching ? foundBiz.count : businesses.count
+    return businesses.count
   }
   
   func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCellWithIdentifier("businessCell", forIndexPath: indexPath) as! BusinessCell
     
-    cell.business = isSearching ? foundBiz[indexPath.row] : businesses[indexPath.row]
+    cell.business = businesses[indexPath.row]
+    cell.nameLabel.text = String(indexPath.row + 1) + ". " + cell.nameLabel.text!
+    cell.priceLabel.hidden = !businesses[indexPath.row].hasDeal
     // print("indexpath = \(indexPath.row)")
     
     // Infinite load if last cell
-    if !isLoadingNextPage && !isEndOfFeed && !isSearching {
+    if !isLoadingNextPage && !isEndOfFeed {
       if indexPath.row == businesses.count - 1 {
         starting += nResults
         loadingView.startAnimating()
@@ -191,10 +191,7 @@ extension BusinessesViewController: UISearchBarDelegate {
   }
   
   func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-    if let st = searchBar.text {
-      dimmingView.hidden = !st.isEmpty
-    }
-    searchBar.enablesReturnKeyAutomatically = true
+    dimmingView.hidden = false
     searchBar.showsCancelButton = true
   }
   
@@ -204,35 +201,20 @@ extension BusinessesViewController: UISearchBarDelegate {
   
   func searchBarCancelButtonClicked(searchBar: UISearchBar) {
     searchBar.text = ""
-    isSearching = false
     dimmingView.hidden = true
-    self.tableView.reloadData()
     searchBar.resignFirstResponder()
+    searchBar.showsCancelButton = false
   }
   
   func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-    searchBar.resignFirstResponder()
-  }
-  
-  func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-    if searchText.isEmpty {
-      // Load all
-      isSearching = false
-      self.tableView.reloadData()
-      dimmingView.hidden = false
-      return
-    }
-    
-    isSearching = true
     dimmingView.hidden = true
-    foundBiz = businesses.filter({ (business) -> Bool in
-      let biz: Business = business
-      let range = NSString(string: biz.name!).rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch)
-      return range.location != NSNotFound
-    })
-    
-    self.tableView.reloadData()
-    
+    searchTerm = searchBar.text!
+    searchBar.resignFirstResponder()
+    searchBar.showsCancelButton = false
+    // Clear the list
+    starting = 0
+    businesses = [Business]()
+    searchRestaurants(searchTerm, sortBy: sortBy, distance: distance, categories: categories, deals: deals, starting: starting)
   }
   
 }

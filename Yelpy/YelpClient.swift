@@ -10,10 +10,10 @@ import UIKit
 import BDBOAuth1Manager
 
 // You can register for Yelp API keys here: http://www.yelp.com/developers/manage_api_keys
-let yelpConsumerKey = "vxKwwcR_NMQ7WaEiQBK_CA"
-let yelpConsumerSecret = "33QCvh5bIF5jIHR5klQr7RtBDhQ"
-let yelpToken = "uRcRswHFYa1VkDrGV6LAW2F8clGh5JHV"
-let yelpTokenSecret = "mqtKIxMIR4iBtBPZCmCLEb-Dz3Y"
+let yelpConsumerKey = "5PEogcKnmorm48om9FHlTw"
+let yelpConsumerSecret = "mTPPMC3KoGdbllzxP7nWcTiR2IQ"
+let yelpToken = "dFSVGMT_cYWdFuK5mKx_xghytPGBhpXO"
+let yelpTokenSecret = "YurwpllhD20nE5bpwumu3CX4itA"
 
 enum YelpSortMode: Int {
   case BestMatched = 0, Distance, HighestRated
@@ -58,7 +58,7 @@ class YelpClient: BDBOAuth1RequestOperationManager {
     
     // Default the location to San Francisco (Disneyland "ll": "33.8090,-117.9190")
     var parameters: [String : AnyObject] = ["term": term, "ll": "37.785771,-122.406165"]
-
+    
     if sort != nil {
       parameters["sort"] = sort!.rawValue
     }

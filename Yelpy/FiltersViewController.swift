@@ -27,6 +27,7 @@ class FiltersViewController: UIViewController {
   
   var categories: [[String:String]]!
   var categoriesSwitchStates = [Int:Bool]()
+  var isExpandingCategories = false
   var filters = [String:AnyObject]()
   
   weak var delegate: FiltersViewControllerDelegate?
@@ -52,6 +53,7 @@ class FiltersViewController: UIViewController {
     
     tableView.dataSource = self
     tableView.delegate = self
+    tableView.tableFooterView = UIView()
   }
   
   @IBAction func onCancelButton(sender: AnyObject) {
@@ -116,6 +118,7 @@ class FiltersViewController: UIViewController {
   }
 }
 
+// MARK: - Table View
 extension FiltersViewController: UITableViewDelegate, UITableViewDataSource, SwitchCellDelegate, CheckBoxCellDelegate {
   
   func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -124,7 +127,7 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource, Swi
       // Deal
     case 0:
       let cell = tableView.dequeueReusableCellWithIdentifier("checkBoxCell", forIndexPath: indexPath) as! CheckBoxCell
-      cell.checkBoxLabel.text = "Offerring deal"
+      cell.checkBoxLabel.text = "Offerring a deal"
       cell.checkBox.on = isDealOfferred
       cell.checkBox.userInteractionEnabled = true
       cell.delegate = self
@@ -145,11 +148,25 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource, Swi
       return cell
       
     case 3:
-      let cell = tableView.dequeueReusableCellWithIdentifier("switchCell", forIndexPath: indexPath) as! SwitchCell
-      cell.switchLabel.text = categories[indexPath.row]["name"]
-      cell.delegate = self
-      cell.onSwitch.on = categoriesSwitchStates[indexPath.row] ?? false
-      return cell
+      let rowLimit = tableView.numberOfRowsInSection(indexPath.section)
+      if indexPath.row < rowLimit - 1 {
+        let cell = tableView.dequeueReusableCellWithIdentifier("switchCell", forIndexPath: indexPath) as! SwitchCell
+        cell.switchLabel.text = categories[indexPath.row]["name"]
+        cell.delegate = self
+        cell.onSwitch.on = categoriesSwitchStates[indexPath.row] ?? false
+        return cell
+      } else {
+        // This is last row, for the "See more"
+        let cell = UITableViewCell()
+        let cellText = UILabel(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, 45))
+        cellText.text = isExpandingCategories ? "Collapse" : "See more..."
+        cellText.textAlignment = .Center
+        cell.addSubview(cellText)
+        cell.backgroundColor = MyColors.selectedCellColor
+        cell.userInteractionEnabled = true
+        cell.selectedBackgroundView?.backgroundColor = MyColors.selectedCellColor
+        return cell
+      }
       
     default:
       return UITableViewCell()
@@ -165,7 +182,7 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource, Swi
     case 0: return 1
     case 1: return distanceList.count
     case 2: return sortByList.count
-    case 3: return categories.count
+    case 3: return isExpandingCategories ? categories.count + 1 : 4
     default: return 0
     }
   }
@@ -205,8 +222,10 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource, Swi
   }
   
   func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-    if indexPath.section == 1 {
-      // Toggle states
+    switch indexPath.section {
+    case 0: break
+    case 1:
+      // Toggle states for Distance
       if isExpandingDistanceSection {
         selectedDistance = indexPath.row
         isExpandingDistanceSection = false
@@ -216,10 +235,9 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource, Swi
         isExpandingDistanceSection = true
         tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: .Automatic)
       }
-    }
-    
-    if indexPath.section == 2 {
-      // Toggle states
+      
+    case 2:
+      // Toggle states for SortBy
       if isExpandingSortBySection {
         selectedSortBy = indexPath.row
         isExpandingSortBySection = false
@@ -229,6 +247,12 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource, Swi
         isExpandingSortBySection = true
         tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: .Automatic)
       }
+      
+    case 3:
+      isExpandingCategories = !isExpandingCategories
+      tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: .Automatic)
+      
+    default: break
     }
   }
   
