@@ -34,6 +34,7 @@ class BusinessesViewController: UIViewController {
   var sortBy = 1
   var distance: Int?
   var deals = false
+  var filters = [String:AnyObject]()
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -46,7 +47,6 @@ class BusinessesViewController: UIViewController {
     tableView.estimatedRowHeight = 140
     // Add the activity Indicator for table footer for infinity load
     let tableFooterView = UIView(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, 50))
-    print(tableView.frame.width)
     loadingView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     loadingView.center = tableFooterView.center
     loadingView.hidesWhenStopped = true
@@ -61,11 +61,9 @@ class BusinessesViewController: UIViewController {
     tableFooterView.addSubview(noMoreResultLabel)
     tableView.tableFooterView = tableFooterView
     
-    
     // Initialize UISearchBar
     searchBar = UISearchBar()
     searchBar.delegate = self
-    
     // Add search bar to navigation bar
     searchBar.sizeToFit()
     navigationItem.titleView = searchBar
@@ -80,6 +78,12 @@ class BusinessesViewController: UIViewController {
     dimmingView.addGestureRecognizer(tapGestureOnDimming)
     
     // Load initial data
+    filters["categories"] = categories
+    filters["sortBy"] = sortBy
+    filters["deal"] = deals
+    filters["distanceIdx"] = 0
+    filters["distance"] = nil
+    
     searchRestaurants(searchTerm, sortBy: sortBy, distance: distance, categories: categories, deals: deals, starting: starting)
   }
   
@@ -90,10 +94,11 @@ class BusinessesViewController: UIViewController {
     }
     
     Business.searchWithTerm(term, sort: YelpSortMode(rawValue: sortBy), distance: distance, categories: categories, deals: deals, starting: starting) { (businesses: [Business]!, error: NSError!) -> Void in
-      print(self.businesses.count)
+      print("API returns \(self.businesses.count)")
       if businesses != nil {
         for business in businesses {
           self.businesses.append(business)
+          // print(business.name! + " @ " + business.address!)
         }
         self.isEndOfFeed = businesses.count < self.nResults
       } else {
@@ -104,9 +109,6 @@ class BusinessesViewController: UIViewController {
       
       MBProgressHUD.hideHUDForView(self.view, animated: true)
       self.isLoadingNextPage = false
-      //      for business in businesses {
-      //        print(business.name! + " @ " + business.address!)
-      //      }
     }
   }
   
@@ -117,7 +119,7 @@ extension BusinessesViewController: UITableViewDataSource, UITableViewDelegate {
   func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     loadingView.stopAnimating()
     //print(businesses.count)
-      return isSearching ? foundBiz.count : businesses.count
+    return isSearching ? foundBiz.count : businesses.count
   }
   
   func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -157,6 +159,7 @@ extension BusinessesViewController: FiltersViewControllerDelegate {
     let navigationController = segue.destinationViewController as! UINavigationController
     let filtersViewController = navigationController.topViewController as! FiltersViewController
     filtersViewController.delegate = self
+    filtersViewController.filters = self.filters
   }
   
   func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String : AnyObject]) {
@@ -164,6 +167,7 @@ extension BusinessesViewController: FiltersViewControllerDelegate {
     starting = 0
     businesses = [Business]()
     
+    self.filters = filters
     categories = (filters["categories"] as? [String])!
     sortBy = (filters["sortBy"] as? Int)!
     deals = (filters["deal"] as? Bool)!

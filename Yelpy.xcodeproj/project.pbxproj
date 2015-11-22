@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		180DDC161C0088DC0012F691 /* CheckBoxCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180DDC151C0088DC0012F691 /* CheckBoxCell.swift */; };
+		1878E2AF1C016C6300CA41EE /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1878E2AE1C016C6300CA41EE /* Helper.swift */; };
 		18C77F7A1C002E4100BC046E /* MyColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C77F791C002E4100BC046E /* MyColors.swift */; };
 		18C8708F1BFB87D2002652CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C8708E1BFB87D2002652CC /* AppDelegate.swift */; };
 		18C870911BFB87D2002652CC /* BusinessesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C870901BFB87D2002652CC /* BusinessesViewController.swift */; };
@@ -24,6 +25,7 @@
 
 /* Begin PBXFileReference section */
 		180DDC151C0088DC0012F691 /* CheckBoxCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckBoxCell.swift; sourceTree = "<group>"; };
+		1878E2AE1C016C6300CA41EE /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		18C77F791C002E4100BC046E /* MyColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyColors.swift; sourceTree = "<group>"; };
 		18C8708B1BFB87D2002652CC /* Yelpy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yelpy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		18C8708E1BFB87D2002652CC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				18C8709A1BFB87D2002652CC /* Info.plist */,
 				18C870B31BFB8DFC002652CC /* Yelpy-Bridging-Header.h */,
 				18C77F791C002E4100BC046E /* MyColors.swift */,
+				1878E2AE1C016C6300CA41EE /* Helper.swift */,
 			);
 			path = Yelpy;
 			sourceTree = "<group>";
@@ -275,6 +278,7 @@
 				18C870911BFB87D2002652CC /* BusinessesViewController.swift in Sources */,
 				18C8708F1BFB87D2002652CC /* AppDelegate.swift in Sources */,
 				18F7BF4F1BFE33E300B7DA1B /* SwitchCell.swift in Sources */,
+				1878E2AF1C016C6300CA41EE /* Helper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
