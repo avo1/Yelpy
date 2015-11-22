@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		180DDC161C0088DC0012F691 /* CheckBoxCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180DDC151C0088DC0012F691 /* CheckBoxCell.swift */; };
 		1878E2AF1C016C6300CA41EE /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1878E2AE1C016C6300CA41EE /* Helper.swift */; };
+		1878E2B11C019DCB00CA41EE /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1878E2B01C019DCB00CA41EE /* MapKit.framework */; };
+		1878E2B31C01A9E700CA41EE /* MapCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1878E2B21C01A9E700CA41EE /* MapCell.swift */; };
+		1878E2B51C01AEC900CA41EE /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1878E2B41C01AEC900CA41EE /* Location.swift */; };
 		18C77F7A1C002E4100BC046E /* MyColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C77F791C002E4100BC046E /* MyColors.swift */; };
 		18C8708F1BFB87D2002652CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C8708E1BFB87D2002652CC /* AppDelegate.swift */; };
 		18C870911BFB87D2002652CC /* BusinessesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C870901BFB87D2002652CC /* BusinessesViewController.swift */; };
@@ -26,6 +29,9 @@
 /* Begin PBXFileReference section */
 		180DDC151C0088DC0012F691 /* CheckBoxCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckBoxCell.swift; sourceTree = "<group>"; };
 		1878E2AE1C016C6300CA41EE /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		1878E2B01C019DCB00CA41EE /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		1878E2B21C01A9E700CA41EE /* MapCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapCell.swift; sourceTree = "<group>"; };
+		1878E2B41C01AEC900CA41EE /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		18C77F791C002E4100BC046E /* MyColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyColors.swift; sourceTree = "<group>"; };
 		18C8708B1BFB87D2002652CC /* Yelpy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yelpy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		18C8708E1BFB87D2002652CC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -50,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1878E2B11C019DCB00CA41EE /* MapKit.framework in Frameworks */,
 				A188F37BB24C85E44E2F22BF /* Pods_Yelpy.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -100,6 +107,7 @@
 				18C870BA1BFB9716002652CC /* BusinessCell.swift */,
 				18F7BF4E1BFE33E300B7DA1B /* SwitchCell.swift */,
 				180DDC151C0088DC0012F691 /* CheckBoxCell.swift */,
+				1878E2B21C01A9E700CA41EE /* MapCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -108,6 +116,7 @@
 			isa = PBXGroup;
 			children = (
 				18C870AC1BFB8D15002652CC /* Business.swift */,
+				1878E2B41C01AEC900CA41EE /* Location.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -132,6 +141,7 @@
 		2FA96351CD77A32ED2499D34 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1878E2B01C019DCB00CA41EE /* MapKit.framework */,
 				C9600464B35030765192434B /* Pods_Yelpy.framework */,
 			);
 			name = Frameworks;
@@ -182,6 +192,11 @@
 					18C8708A1BFB87D2002652CC = {
 						CreatedOnToolsVersion = 7.1.1;
 						DevelopmentTeam = QCBK6P7M2R;
+						SystemCapabilities = {
+							com.apple.Maps.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -272,12 +287,14 @@
 				18C870BB1BFB9716002652CC /* BusinessCell.swift in Sources */,
 				180DDC161C0088DC0012F691 /* CheckBoxCell.swift in Sources */,
 				18C77F7A1C002E4100BC046E /* MyColors.swift in Sources */,
+				1878E2B31C01A9E700CA41EE /* MapCell.swift in Sources */,
 				18C870AF1BFB8D27002652CC /* YelpClient.swift in Sources */,
 				18F7BF511BFE373700B7DA1B /* FiltersViewController.swift in Sources */,
 				18C870AD1BFB8D15002652CC /* Business.swift in Sources */,
 				18C870911BFB87D2002652CC /* BusinessesViewController.swift in Sources */,
 				18C8708F1BFB87D2002652CC /* AppDelegate.swift in Sources */,
 				18F7BF4F1BFE33E300B7DA1B /* SwitchCell.swift in Sources */,
+				1878E2B51C01AEC900CA41EE /* Location.swift in Sources */,
 				1878E2AF1C016C6300CA41EE /* Helper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

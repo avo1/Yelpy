@@ -249,8 +249,10 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource, Swi
       }
       
     case 3:
-      isExpandingCategories = !isExpandingCategories
-      tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: .Automatic)
+      if indexPath.row == tableView.numberOfRowsInSection(indexPath.section) - 1 {
+        isExpandingCategories = !isExpandingCategories
+        tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: .Automatic)
+      }
       
     default: break
     }

@@ -8,11 +8,14 @@
 
 import UIKit
 import MBProgressHUD
+import MapKit
 
 class BusinessesViewController: UIViewController {
   
   @IBOutlet weak var tableView: UITableView!
   @IBOutlet weak var dimmingView: UIView!
+  @IBOutlet weak var navBar: UINavigationItem!
+  var mapButton: UIBarButtonItem!
   
   var searchBar: UISearchBar!
   var searchTerm = "coffee"
@@ -22,8 +25,10 @@ class BusinessesViewController: UIViewController {
   var isEndOfFeed = false
   
   var tapGestureOnDimming: UITapGestureRecognizer!
+  var tapGestureOnMap: UITapGestureRecognizer!
   var loadingView: UIActivityIndicatorView!
   var noMoreResultLabel = UILabel()
+  var isMapFullScreen = false
   
   // Filters
   let nResults = 20
@@ -61,10 +66,15 @@ class BusinessesViewController: UIViewController {
     
     // Initialize UISearchBar
     searchBar = UISearchBar()
+    searchBar.tintColor = MyColors.bluesky
     searchBar.delegate = self
     // Add search bar to navigation bar
     searchBar.sizeToFit()
     navigationItem.titleView = searchBar
+    
+    // Initialize the mapButton
+    mapButton = UIBarButtonItem(image: UIImage(named: "Map"), style: UIBarButtonItemStyle.Plain, target: self, action: "showMap")
+    navBar.rightBarButtonItem = mapButton
     
     // Prepare the dimmingView
     dimmingView.frame.origin.y = 0 //tableView.frame.origin.y
@@ -110,45 +120,111 @@ class BusinessesViewController: UIViewController {
     }
   }
   
+  func onMapTap(gesture: UITapGestureRecognizer) {
+    if isMapFullScreen {
+      return
+    }
+    if gesture.state == UIGestureRecognizerState.Ended {
+      showMap()
+    }
+  }
+  
+  func showMap() {
+    isMapFullScreen = !isMapFullScreen
+    navBar.rightBarButtonItem!.image = isMapFullScreen ? UIImage(named: "List") : UIImage(named: "Map")
+    tableView.reloadData()
+  }
 }
 
+// MARK: - Table View
 extension BusinessesViewController: UITableViewDataSource, UITableViewDelegate {
   
+  func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    return 2
+  }
+  
   func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    loadingView.stopAnimating()
-    //print(businesses.count)
-    return businesses.count
+    if section == 0 {
+      return 1
+    } else {
+      loadingView.stopAnimating()
+      //print(businesses.count)
+      return businesses.count
+    }
   }
   
   func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCellWithIdentifier("businessCell", forIndexPath: indexPath) as! BusinessCell
-    
-    cell.business = businesses[indexPath.row]
-    cell.nameLabel.text = String(indexPath.row + 1) + ". " + cell.nameLabel.text!
-    cell.priceLabel.hidden = !businesses[indexPath.row].hasDeal
-    // print("indexpath = \(indexPath.row)")
-    
-    // Infinite load if last cell
-    if !isLoadingNextPage && !isEndOfFeed {
-      if indexPath.row == businesses.count - 1 {
-        starting += nResults
-        loadingView.startAnimating()
-        isLoadingNextPage = true
-        searchRestaurants(searchTerm, sortBy: sortBy, distance: distance, categories: categories, deals: deals, starting: starting)
+    if indexPath.section == 0 {
+      let cell = tableView.dequeueReusableCellWithIdentifier("mapCell", forIndexPath: indexPath) as! MapCell
+      
+      // This is the "current location" used in YelpClient API
+      var userLocation = CLLocationCoordinate2D()
+      userLocation.latitude = 37.785771
+      userLocation.longitude = -122.406165
+      
+      // Some of math here, 1 degree ~ 111km, ok take 100km for easiness
+      // So to have the radius of 3km -> use 0.03 degree
+      let span = MKCoordinateSpanMake(0.03, 0.03)
+      let region = MKCoordinateRegion(center: userLocation, span: span)
+      
+      cell.mapView.setRegion(region, animated: true)
+      cell.mapView.regionThatFits(region)
+      
+      for biz in businesses {
+        cell.mapView.addAnnotation(biz.location)
       }
+      
+      tapGestureOnMap = UITapGestureRecognizer(target: self, action: "onMapTap:")
+      cell.mapView.addGestureRecognizer(tapGestureOnMap)
+      
+      return cell
+    } else {
+      let cell = tableView.dequeueReusableCellWithIdentifier("businessCell", forIndexPath: indexPath) as! BusinessCell
+      
+      cell.business = businesses[indexPath.row]
+      cell.nameLabel.text = String(indexPath.row + 1) + ". " + cell.nameLabel.text!
+      cell.priceLabel.hidden = !businesses[indexPath.row].hasDeal
+      // print("indexpath = \(indexPath.row)")
+      
+      // Infinite load if last cell
+      if !isLoadingNextPage && !isEndOfFeed {
+        if indexPath.row == businesses.count - 1 {
+          starting += nResults
+          loadingView.startAnimating()
+          isLoadingNextPage = true
+          searchRestaurants(searchTerm, sortBy: sortBy, distance: distance, categories: categories, deals: deals, starting: starting)
+        }
+      }
+      return cell
     }
     
-    return cell
+  }
+  
+  func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    if indexPath.section == 0 {
+      return isMapFullScreen ? UIScreen.mainScreen().bounds.size.height : 250
+    } else {
+      return 80
+    }
   }
   
   func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-    let cell = tableView.cellForRowAtIndexPath(indexPath)!
-    cell.contentView.backgroundColor = MyColors.selectedCellColor
+    if indexPath.section == 0 {
+      // Expand the map to full screen
+      
+    } else {
+      let cell = tableView.cellForRowAtIndexPath(indexPath)!
+      cell.contentView.backgroundColor = MyColors.selectedCellColor
+    }
   }
   
   func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
-    let cell = tableView.cellForRowAtIndexPath(indexPath)!
-    cell.contentView.backgroundColor = UIColor.whiteColor()
+    if indexPath.section == 0 {
+      
+    } else {
+      let cell = tableView.cellForRowAtIndexPath(indexPath)!
+      cell.contentView.backgroundColor = UIColor.whiteColor()
+    }
   }
   
 }
@@ -191,6 +267,7 @@ extension BusinessesViewController: UISearchBarDelegate {
   }
   
   func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+    navBar.rightBarButtonItem = nil
     dimmingView.hidden = false
     searchBar.showsCancelButton = true
   }
@@ -204,6 +281,7 @@ extension BusinessesViewController: UISearchBarDelegate {
     dimmingView.hidden = true
     searchBar.resignFirstResponder()
     searchBar.showsCancelButton = false
+    navBar.rightBarButtonItem = mapButton
   }
   
   func searchBarSearchButtonClicked(searchBar: UISearchBar) {
@@ -211,6 +289,7 @@ extension BusinessesViewController: UISearchBarDelegate {
     searchTerm = searchBar.text!
     searchBar.resignFirstResponder()
     searchBar.showsCancelButton = false
+    navBar.rightBarButtonItem = mapButton
     // Clear the list
     starting = 0
     businesses = [Business]()
