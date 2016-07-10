@@ -32,3 +32,10 @@ Time spent: `24hr`
 ### Walkthrough
 
 ![Video Walkthrough](Yelpy.gif)
+
+Credits
+---------
+* [AFNetworking](https://github.com/AFNetworking/AFNetworking)
+* [MBProgressHUD](https://github.com/jdg/MBProgressHUD)
+* [BDBOAuth1Manager](https://github.com/bdbergeron/BDBOAuth1Manager)
+* [BEMCheckBox](https://github.com/Boris-Em/BEMCheckBox)
